@@ -1,4 +1,3 @@
-// 질문 데이터
 const strainQuestions = [
   "부모님 또는 주요 보호자와의 심각한 갈등을 경험한 적이 있다.",
   "가족 중 누군가의 중증 질병이나 장애로 인해 어려움을 겪은 적이 있다.",
@@ -42,8 +41,19 @@ document.getElementById('submitSurvey').addEventListener('click', () => {
   const weightedEmotion = currentEmotionScore * 0.3;
   const total = weightedSurvey + weightedEmotion;
 
+  let message = "";
+  if (total < 10) {
+    message = "주위 사람과의 대화를 통해 지금 상태를 유지하세요.";
+  } else if (total < 20) {
+    message = "심호흡과 함께 짧은 명상을 해보세요.";
+  } else if (total < 30) {
+    message = "깊게 숨 쉬고, 산책을 해보세요.";
+  } else {
+    message = "주위에 도움을 요청하고 스트레스 일기를 쓰며 스트레스를 줄여보세요.";
+  }
+
   document.getElementById('finalScore').innerText =
-    `총 스트레스 지수: ${total.toFixed(1)}점 (설문: ${weightedSurvey.toFixed(1)} + 표정: ${weightedEmotion.toFixed(1)})`;
+    `총 스트레스 지수: ${total.toFixed(1)}점\n${message}`;
 });
 
 // 표정 점수 로직
@@ -86,11 +96,10 @@ async function start() {
       faceapi.draw.drawDetections(canvas, resized);
       faceapi.draw.drawFaceExpressions(canvas, resized);
 
-      // 표정 점수 계산
       if (detections.length > 0) {
         const expressions = detections[0].expressions;
         const stressRelated = (expressions.angry || 0) + (expressions.sad || 0) + (expressions.fearful || 0);
-        currentEmotionScore = Math.min(10, stressRelated * 10); // 0~10점 스케일
+        currentEmotionScore = Math.min(10, stressRelated * 10);
       }
 
     }, 1000);
