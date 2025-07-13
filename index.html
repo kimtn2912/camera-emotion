@@ -3,13 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Emotion Detection</title>
-</head>
-<body>
-<h1>Emotion Detection</h1>
-<video id="video" width="720" height="560" autoplay muted></video>
-<!-- face-api.js -->
+<title>Emotion & STRAIN Stress Check</title>
 <script defer src="./face-api.min.js"></script>
 <script defer src="./script.js"></script>
+</head>
+<body>
+<h1>Emotion & STRAIN Stress Check</h1>
+
+<!-- 📷 카메라 -->
+<video id="video" width="720" height="560" autoplay muted></video>
+
+<!-- 📋 설문 -->
+<div id="survey">
+  <h2>STRAIN 설문 (평생 경험)</h2>
+  <form id="strainForm">
+    <!-- 설문 문항이 여기에 생성됩니다 -->
+  </form>
+  <button id="submitSurvey">설문 제출</button>
+</div>
+
+<!-- 결과 -->
+<div id="result">
+  <h2>결과</h2>
+  <p id="finalScore">계산 중...</p>
+</div>
+
 </body>
 </html>
