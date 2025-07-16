@@ -8,9 +8,10 @@ const strainQuestions = [
   "가족의 심각한 경제적 어려움을 경험한 적이 있다.",
   "집을 잃거나 이사 등으로 안정된 거주 환경이 흔들린 적이 있다.",
   "신체적 폭력이나 위협을 직접 경험하거나 목격한 적이 있다.",
-  "사랑하는 사람의 죽음이나 실종을 경험한 적이 있다."
+  "사랑하는 사람(가족, 친구)의 죽음이나 실종을 경험한 적이 있다."
 ];
 
+// 설문 문항 생성
 function generateSurvey() {
   const form = document.getElementById('strainForm');
   strainQuestions.forEach((q, idx) => {
@@ -26,11 +27,6 @@ function generateSurvey() {
   });
 }
 generateSurvey();
-
-let currentEmotionScore = 0;
-
-// Google Apps Script Web App URL
-const SPREADSHEET_WEBAPP_URL = "여기에_복사한_Web_App_URL_붙여넣기";
 
 document.getElementById('submitSurvey').addEventListener('click', () => {
   const form = document.getElementById('strainForm');
@@ -59,21 +55,23 @@ document.getElementById('submitSurvey').addEventListener('click', () => {
   document.getElementById('finalScore').innerText =
     `총 스트레스 지수: ${total.toFixed(1)}점\n${message}`;
 
-  // Google Sheets 기록
-  fetch(SPREADSHEET_WEBAPP_URL, {
+  // 📋 구글 시트에 기록
+  fetch("https://script.google.com/macros/s/AKfycbzI9oslNtYWddANBRdveBuOh2yOkVOqiISmMt5n5wB2o9bsagmpZIOLajf2Pw9XT3NyrQ/exec", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      surveyScore,
-      currentEmotionScore,
-      totalScore: total.toFixed(1),
-      date: new Date().toLocaleString()
-    }),
-    headers: { "Content-Type": "application/json" }
+      surveyScore: surveyScore,
+      emotionScore: currentEmotionScore,
+      totalScore: total
+    })
   })
-    .then(res => res.text())
-    .then(txt => console.log("Google Sheet 기록:", txt))
-    .catch(err => console.error("기록 오류:", err));
+  .then(res => res.text())
+  .then(txt => console.log("기록 성공:", txt))
+  .catch(err => console.error("기록 실패:", err));
 });
+
+// 표정 점수 로직
+let currentEmotionScore = 0;
 
 async function start() {
   const video = document.getElementById('video');
