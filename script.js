@@ -3,15 +3,14 @@ const strainQuestions = [
   "가족 중 누군가의 중증 질병이나 장애로 인해 어려움을 겪은 적이 있다.",
   "부모님의 이혼, 별거 또는 가출을 경험한 적이 있다.",
   "학교에서 왕따(집단 따돌림)를 당한 적이 있다.",
-  "친구나 중요한 사람과의 심각한 관계 단절(절교, 배신 등)을 경험한 적이 있다.",
+  "친구나 중요한 사람과의 심각한 관계 단절을 경험한 적이 있다.",
   "학업 성취에 대한 과도한 압박을 받아 힘들었던 적이 있다.",
   "가족의 심각한 경제적 어려움을 경험한 적이 있다.",
   "집을 잃거나 이사 등으로 안정된 거주 환경이 흔들린 적이 있다.",
   "신체적 폭력이나 위협을 직접 경험하거나 목격한 적이 있다.",
-  "사랑하는 사람(가족, 친구)의 죽음이나 실종을 경험한 적이 있다."
+  "사랑하는 사람의 죽음이나 실종을 경험한 적이 있다."
 ];
 
-// 설문 문항 생성
 function generateSurvey() {
   const form = document.getElementById('strainForm');
   strainQuestions.forEach((q, idx) => {
@@ -27,6 +26,11 @@ function generateSurvey() {
   });
 }
 generateSurvey();
+
+let currentEmotionScore = 0;
+
+// Google Apps Script Web App URL
+const SPREADSHEET_WEBAPP_URL = "여기에_복사한_Web_App_URL_붙여넣기";
 
 document.getElementById('submitSurvey').addEventListener('click', () => {
   const form = document.getElementById('strainForm');
@@ -54,10 +58,22 @@ document.getElementById('submitSurvey').addEventListener('click', () => {
 
   document.getElementById('finalScore').innerText =
     `총 스트레스 지수: ${total.toFixed(1)}점\n${message}`;
-});
 
-// 표정 점수 로직
-let currentEmotionScore = 0;
+  // Google Sheets 기록
+  fetch(SPREADSHEET_WEBAPP_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      surveyScore,
+      currentEmotionScore,
+      totalScore: total.toFixed(1),
+      date: new Date().toLocaleString()
+    }),
+    headers: { "Content-Type": "application/json" }
+  })
+    .then(res => res.text())
+    .then(txt => console.log("Google Sheet 기록:", txt))
+    .catch(err => console.error("기록 오류:", err));
+});
 
 async function start() {
   const video = document.getElementById('video');
